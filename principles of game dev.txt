@@ -1,0 +1,9 @@
+CANVAS
+
+❌ CSS sizing stretches it
+✅ attribute sizing actually makes it bigger
+- Full screen games can be done with...
+canvas.width = window.width;
+canvas.height = window.innerHeight;
+
+// notebook

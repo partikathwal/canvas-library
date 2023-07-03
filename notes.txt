@@ -1,0 +1,281 @@
+window onload
+it should run only after images and resources are all loaded.
+
+js: set width and height to what you want
+css: max-width: 100%; max-height: 100%
+This makes sure it keeps teh aspect ratio, but always fits in screen
+
+define classes
+InputHandler    input events
+Projectile      lasers and stuff
+Particle        falling bolts and stuff
+Player          the player (sprites etc)
+Enemy           the enemy
+Layer           individual layers and parallax scrolling and stuff
+Background      hold all layers
+UI              menus, timers, points, etc
+Game            the brain
+
+
+Player
+
+constructor needs game object as param
+width height should match sprite
+x and y position
+speed X, speed Y (how much to change position on each update)
+update and draw methods
+draw should accept context object (if there are different layers)
+    always good to not reference global vars
+
+
+Game
+
+constructor accepts width and height (of canvas) as args and sets as props
+this.player = new Player(this)
+update and draw call update and draw methods of this.player
+
+
+Animation Loop
+
+const game = new Game(canvas.width, canvas.height);
+
+function animate(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    game.update();
+    game.draw();
+    requestAnimationFrame(animate);
+}
+animate();
+
+
+
+Input Handler
+
+constructor takes game
+Game constructor instantiates InputHandler after player
+
+constructor adds EventListeners
+
+('keydown')
+if((e.key === 'ArrowUp' || e.key === 'ArrowDown') && !this.game.keys.includes(e.key))
+    this.game.keys.push(e.key)
+
+('keyup')
+if(this.game.keys.includes(e.key))
+    this.game.keys.splice(this.game.keys.indexOf(e.key), 1)
+
+keys are stored on game object so they are available everywhere game is
+That way things like player can respond to keys
+
+player.update =>
+if(this.game.keys.includes('ArrowUp'))
+    this.speedY = -this.maxSpeed; //acceleration?
+else if (...)
+    this.speedY = this.maxSpeed; //acceleration?
+else
+    this.speedY = 0 // abrupt stop?
+this.y + = this.speedY;
+
+
+
+Projectiles
+
+constructor takes game, and starting x,y (depends on player's position)
+has property markedForDeletion, false
+    in update(), when x > game.width * 0.8, true
+    0.8 because he doesn't want it to hit enemies off screen
+
+player has shootTop() method
+this.projectiles.push(new Projectile(...))
+
+// interesting, but yeah, the owner update calls child update
+Player.update calls
+    projectiles.forEach(p => p.update())
+    projectiles = projectiles.filter(p => !p.markedForDeletion)
+Player draw calls
+    projectiles.forEach(p => p.draw(context))
+
+//interesting its on game not player
+Game can have ammo = 20 
+shootTop can have if(ammo > 0) {...; ammo--}
+
+
+
+Periodic events
+
+'Every 500ms, ammo++ up to a maximum'
+requestAnimationFrame provides a timestamp since page load to animate()
+That can be used to keep time.
+
+let lastTime = 0;
+function animate(timestamp){
+    const deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+    game.update(deltaTime)
+    game.draw()
+    requestAnimationFrame(animate)
+}
+
+game.update(deltaTime){
+    //game.ammo = 20
+    //game.ammoTimer = 0; //current time counter
+    //game.ammoInterval = 500; //{constant} max for the counter
+    //game.maxAmmo = 50;
+
+    this.player.update();
+    if(this.ammoTimer > this.ammoInterval){
+        //if over 500ms passed, add 1 to ammo and reset timer.
+        if(this.ammo < this.maxAmmo) this.ammo++;
+        this.ammoTimer = 0;
+    }else{
+        //every frame (update()) count how much time passed
+        this.ammoTimer += deltaTime;
+    }
+}
+
+
+UI class (for messages and statuses)
+
+e.g. ammo meter
+
+UI constructor(game), sets font properties (fontSize, fontFamily, color)
+draw(context)
+    context.fillStyle = this.color
+    for(i; i < game.ammo; i++){
+        context.fillRect(20 + 5*i, 50, 3, 20) // 20 left-margin, 5px spacing
+    }
+
+// no update method used. All updates happen in game object?
+    // maybe that's why ammo and stuff is in game and not in player
+
+Game constructor creates new UI, passes this, sets as property
+Game draw calls this.ui.draw(context)
+
+
+Enemy will be a parent class for several types of enemies (and even power ups)
+constructor takes game,
+    set x position,
+    speedX (random in range), 
+    markedForDeletion false
+update()
+    increment x
+    collision (off screen) detection, update marked fro deletion.
+        // if(this.x + this.width < 0) this.markedForDeletion = true;
+        // but we didn't define this.width on Enemy
+        // if we call update from a child class, will 'this' refer to it?
+draw(context)
+    context.fillStyle = 'red'
+    context.fillRect(this.x, this.y, this.width, this.height) // I guess so...
+    //just drawing red rectangles. Start simple, THEN worry about art
+
+class Angler1 extends Enemy
+    constructor(game)
+        super(game)
+        this.width //sprite width
+        this.height //sprite height
+        this.y = Math.random() * (this.game.height * 0.9 - this.height)
+            //random height from top (0) to almost bottom (90% - sprite height)
+
+Game gets this.enemies
+update calls
+    this.enemies.forEach(e => enemy.update())
+    this.enemies = this.enemies.filter(e => e.markedForDeletion);
+draw calls
+    this.enemies.forEach(e => e.draw(context))
+addEnemy (new method) pushes new Angler1(this) to this.enemies
+
+Enemies also appear periodically
+Game gets enemyTimer, enemyInterval, and gameOver false
+update checks
+    if(this.enemyTimer > this.enemyInterval && !this.gameOver){
+        this.addEnemy();
+        this.enemyTimer = 0;
+    }else{
+        this.enemyTimer += deltaTime;
+    }
+
+So Angler1 extends Enemy, and Game holds, updates, draws, adds, removes enemies
+
+
+
+Collision detection
+
+Game can have a general method to check collosion of 2 rectangles
+Game update checks
+    collision of enemy and player, marked for deletion
+    collision of emeny with any projectile
+        projectile markedForDeletion
+        enemy.lives--
+        if(enemy.lives <= 0)
+            enemy.markedForDeletion
+            score += enemy.score (was set to enemy.lives (on Angler1))
+            if(this.score > this.winningScore) gameOver = true
+
+UI display score
+    context.save()
+    context.fillStyle = this.color
+    context.shadowOffsetX = 2;
+    context.shadowOffsetY = 2;
+    context.shadowColor = 'black';
+    context.font = this.fontSize + 'px ' + this.fontFamily;
+    //score
+    context.fillText('Score: ' + this.game.score, 20, 40);
+    //ammo
+    ...
+    context.restore()
+//save and restore block of a set of style changes
+//save() saves state, you change styles and draw, then restore() reverts
+
+Display winning message
+in UI draw, if(this.game.gameOver)
+    context.textAlign = "center"
+    if(this.game.score > this.game.winningScore){}else{}
+    context.font = '50px Arial'
+    context.fillText("", this.game.width * 0.5, this.game.height * 0.5 - 40)
+    //fillText x,y is usually bottom left corner of textbox
+    //But with textAlign center, its the bottom middle
+
+
+Game time
+update()
+    if(!this.gameOver) gameTime += deltaTime
+    if(gameTime > gameTimeLimit) this.gameOver = true;
+check what is still allowed
+    e.g. you can still score points after gameOver, and the message updates
+
+
+
+Layers and Parallax scrolling
+
+HTML, add image tags (loads them, and js is waiting for window.onload)
+CSS, img display none (so we don't see them)
+JS...
+
+Layer class
+constructor(game, image, speedModifier)
+    width/height of the image
+    x,y position (0,0)
+update
+    if(x + width <= 0) x = 0
+    x -= game.speed * speedModifier
+    // game.speed can be adjusted for difficulty
+    // this would affect all layers equally
+draw
+    context.drawImage(this.image, x, y)
+    context.drawImage(this.image, x + width, y)
+    //draw twice to fill gap of wrapping
+
+Background handles all layers (except foreground)
+constructor takes game
+    this.image1 = document.getElementById('layer1')
+    this.layer1 = new Layer(this.game, this.image1, 1);
+    this.layers = [layer1, layer2, layer3]
+update:  layers.forEach(l => l.update)
+draw:  layers.forEach(l => l.draw)
+
+Game, this.Background = new Background(this)
+    update (before player.update) background.update
+    draw (before player.draw) background.draw()
+foreground layers
+    background.layer4.update() //after player and enemies etc
+    background.layer4.draw()  //after player and enemies etc

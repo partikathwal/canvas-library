@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body style="margin:0">
+        <div id="output" style="display: flex; flex-direction: column; flex-wrap: wrap; height: 100vh">STATE</div>
+        <script src="./Controller.min.js"></script>
+        <script>
+            const output = document.querySelector("#output");
+
+            Controller.search();
+
+            addEventListener('gc.button.press', (e) => {
+                console.log(e);
+                output.innerHTML += `<div>${e.detail.name} pressed.</div>`
+            })
+            addEventListener('gc.button.hold', (e) => {
+                console.log(e);
+                output.innerHTML += `<div>${e.detail.name} hold.</div>`
+            })
+            addEventListener('gc.button.release', (e) => {
+                console.log(e);
+                output.innerHTML += `<div>${e.detail.name} release.</div>`
+            })
+        </script>
+    </body>
+</html>
