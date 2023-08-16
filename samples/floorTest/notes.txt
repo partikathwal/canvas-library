@@ -1,0 +1,12 @@
+the game has a loop that runs every frame.
+Every frame, you draw everything as the data tells it
+
+an object has a position
+if in motion, you can move the position according to the speed
+    speed would be pixels per frame
+    in one frame, how many pixels should this move
+But then you also have acceleration
+    acceleration would change the speed each frame
+    how much faster or slower should the speed be after one frame
+
+The browser hopefully has a fixed frame rate, likely 0 frames per second.
