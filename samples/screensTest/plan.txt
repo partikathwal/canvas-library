@@ -1,0 +1,65 @@
+THE PURPOSE
+
+I want to test not just making a game but making interfaces and managing screens.
+
+For interfaces, I'm thinking of making components similar to Vue.
+
+Like a button. It would have a certain style decided by the theme of the game. But it would have props for the text, specific color, and maybe position.
+
+For position, I'm wondering if I have to implement a layout system. But I'll see.
+
+
+THE GAME
+
+I dunno.
+- Weird ping pong? (ping pong with weird physics)
+- Jepoardy (lots of text based stuff and screen management)
+- Jackbox style game
+- Pokemon style game
+- Metroid style game
+- Mario style game
+- Something else.
+
+Let's not get caught up here.
+I just want to test out interfaces.
+Let's start simple and build up.
+
+
+ANIMATIONS
+
+It would be nice to fade out and fade in at the very least.
+Crossfade would be cool.
+
+THE INTERFACES
+
+Intro screen (video, interruptable by pressing any key)
+    <fade to black>
+    <fade in>
+Title screen
+    Full screen image
+    1 button "Press Start (any key)"
+    <crossfade>
+Game Select
+    3 options [new game, continue, options]
+    - new game starts the game
+    - continue is disabled
+    - options opens Options Screen
+Options Screen
+    Music on/off
+    Music volume (number)
+    Sound Effects on/off
+    Sound Effects volume (number)
+    2 buttons []
+    - Reset to Default
+    - Go back
+
+Game Screen
+- Layer with health, points
+- Pause brings pause menu (pauses all animation and updating)
+    - Overlay with 3 buttons
+        - continue
+        - Options
+        - Exit
+            - Are you sure you want to exit? [yes, cancel]
+Mario style game, collect coins and stuff.
+Side scroll.
