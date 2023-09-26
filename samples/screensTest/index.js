@@ -2,6 +2,7 @@ import { fadeOverlay } from "./classes/FadeOverlay.js";
 import { controller } from "./classes/GameController.js";
 import { screenManager } from "./classes/ScreenManager.js";
 import { canvas, ctx } from "./classes/canvas.js";
+import { CONFIG } from "./config.js";
 
 function animate(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -29,3 +30,7 @@ document.getElementById("start").addEventListener("click", function(){
     this.remove();
     init();
 })
+
+if(CONFIG.autoStart){
+    init();
+}

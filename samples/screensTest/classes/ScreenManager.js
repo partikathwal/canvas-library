@@ -1,15 +1,17 @@
+import { CONFIG } from "../config.js";
 import { fadeOverlay } from "./FadeOverlay.js";
 import { gameSelectScreen } from "./GameSelectScreen.js";
 import { optionsScreen } from "./OptionsScreen.js";
 import { titleScreen } from "./TitleScreen.js";
 
 class ScreenManager {
-    #currentScreen = titleScreen;
     #screens = {
         TITLE: titleScreen,
         GAME_SELECT: gameSelectScreen,
         OPTIONS: optionsScreen
     }
+
+    #currentScreen = this.#screens[CONFIG.startingScreen];
 
     get currentScreen(){
         return this.#currentScreen;
