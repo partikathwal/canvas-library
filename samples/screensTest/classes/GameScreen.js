@@ -11,14 +11,27 @@ class GameScreen {
     }
 
     activate(){
-        controller.setMapping({});
+        controller.setMapping({
+            spacebar: this.player.jump.bind(this.player),
+            left: this.player.moveLeft.bind(this.player),
+            right: this.player.moveRight.bind(this.player),
+        });
         this.platforms.push(new Platform({ x: 0, y: canvas.height + this.player.height + 100, width: this.gameMap.width, gameMap: this.gameMap }))
-        this.platforms.push(new Platform({ x: 0, y: 400, width: canvas.width, gameMap: this.gameMap, height: 100 }));
-        this.platforms.push(new Platform({ x: 300, y: 300, width: 200, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 0, y: 380, width: 420, gameMap: this.gameMap, height: 100 }));
+        this.platforms.push(new Platform({ x: 160, y: 265, width: 240, height: 50, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 495, y: 150, width: 195, height: 50, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 610, y: 330, width: 190, height: 150, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 860, y: 390, width: 200, height: 100, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 1160, y: 360, width: 130, height: 200, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 1290, y: 300, width: 180, height: 300, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 1470, y: 190, width: 170, height: 500, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 1640, y: 270, width: 60, height: 500, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 1700, y: 360, width: 140, height: 500, gameMap: this.gameMap }));
+        this.platforms.push(new Platform({ x: 1840, y: 100, width: 130, height: 50, gameMap: this.gameMap }));
     }
     draw(){
         this.gameMap.draw();
-        this.platforms.forEach(p => p.draw());
+        //this.platforms.forEach(p => p.draw());
         this.player.draw();
     }
     update(){
@@ -50,13 +63,14 @@ class Platform {
 class Player {
     x = 100;
     y = canvas.height - 300;
-    width = 160;
-    height = 160;
+    width = 32;
+    height = 32;
     speedX = 0;
     speedY = 0;
-    walkSpeed = 5;
-    jumpSpeed = 15;
-    gravity = 0.5;
+    walkSpeed = 3;
+    jumpSpeed = 20;
+    gravity = 1.5;
+    facingLeft = false;
     inMidAir = false;
     floor = null;
     sprite = {
@@ -64,7 +78,7 @@ class Player {
         row: 0,
         column: 0,
         counter: 0
-    }
+    };
 
     constructor(gameMap){
         this.gameMap = gameMap;
@@ -78,21 +92,30 @@ class Player {
                 (this.y + this.height) <= p.y;
         }).sort((a,b) => a.y - b.y)[0];
     }
-    walk(){
-
+    moveLeft(){
+        console.log("Hey");
+        this.facingLeft = true;
+        this.sprite.row = this.inMidAir ? 5 : 4;
+    }
+    moveRight(){
+        this.facingLeft = false;
+        this.sprite.row = this.inMidAir ? 2 : 1;
     }
     jump(){
-        
+        if(this.inMidAir) return;
+        this.inMidAir = true;
+        this.speedY = this.jumpSpeed;
+        this.sprite.row = this.facingLeft ? 5 : 2;
     }
     draw(){
         //ctx.fillStyle = "red";
         //ctx.fillRect(this.x + this.gameMap.x, this.y + this.gameMap.y, this.width, this.height);
-        const interval = this.sprite.row % 2 === 0 ? 100 : 10;
+        const interval = this.sprite.row === 0 || this.sprite.row === 3 ? 100 : 10;
         this.sprite.counter++;
         if(this.sprite.counter >= interval){
             this.sprite.counter = 0;
             this.sprite.column++;
-            if(this.sprite.column === 3) this.sprite.column = 0;
+            if(this.sprite.column === 4) this.sprite.column = 0;
         }
         ctx.drawImage(this.sprite.image, this.width*this.sprite.column, this.height*this.sprite.row, this.width, this.height, this.x + this.gameMap.x, this.y + this.gameMap.y, this.width, this.height);
     }
@@ -100,52 +123,55 @@ class Player {
         // horizontal speed (walking)
         if(controller.buttons.leftPressed){
             this.speedX = -this.walkSpeed;
-            this.sprite.row = 3
         }else
         if(controller.buttons.rightPressed){
             this.speedX = this.walkSpeed;
-            this.sprite.row = 1
         }else{
             this.speedX = 0;
-            this.sprite.row = this.sprite.row > 1 ? 2 : 0;
+            this.sprite.row = this.inMidAir ?
+                (this.facingLeft ? 5 : 2) :
+                (this.facingLeft ? 3 : 0);
         }
 
-        // move player horizontally
-        if(this.x + this.speedX >= 0 && this.x + this.width + this.speedX <= this.gameMap.width){
-            this.x += this.speedX;
-        }
+        if(this.speedX !== 0){
+            // move player horizontally
+            if(this.x + this.speedX >= 0 && this.x + this.width + this.speedX <= this.gameMap.width){
+                this.x += this.speedX;
+            }
 
-        // move map horizontally
-        this.gameMap.x = ((canvas.width - this.width) / 2) - this.x;
-        if(this.gameMap.x > 0){
-            this.gameMap.x = 0;
+            // move map horizontally
+            this.gameMap.x = ((canvas.width - this.width) / 2) - this.x;
+            if(this.gameMap.x > 0){
+                this.gameMap.x = 0;
+            }
+            if(this.gameMap.x + this.gameMap.width < canvas.width){
+                this.gameMap.x = canvas.width - this.gameMap.width;
+            }
         }
-        if(this.gameMap.x + this.gameMap.width < canvas.width){
-            this.gameMap.x = canvas.width - this.gameMap.width;
-        }
-
+        
         // determine floor
         this.floor = this.getFloor();
-
-        // walking off a platform = inMidAir
+        
+        // falling start or walking off a platform = inMidAir
         if(this.y + this.height < this.floor.y){
-            this.inMidAir = true;
-        }
-
-        // pressing spacebar to jump = inMidAir
-        if(!this.inMidAir && controller.buttons.spacebarPressed){
-            this.speedY = this.jumpSpeed;
             this.inMidAir = true;
         }
 
         // while inMidAir
         if(this.inMidAir){
-            this.speedY -= this.gravity;
+            let modifier = 1;
+            if(controller.buttons.spacebarPressed){
+                modifier = 0.5;
+            }
+            this.speedY -= this.gravity * modifier;
 
             if(this.y + this.height - this.speedY >= this.floor.y){
                 this.y = this.floor.y - this.height;
                 this.inMidAir = false;
                 this.speedY = 0;
+                this.sprite.row = this.speedX === 0 ?
+                    (this.facingLeft ? 3 : 0) :
+                    (this.facingLeft ? 4 : 1);
             }else{
                 this.y -= this.speedY;
             }
@@ -160,15 +186,23 @@ class GameMap {
     height = canvas.height;
     width = 2000;
     image;
+    foreground;
 
     constructor(){
         this.image = new Image();
         this.image.src = "../images/jungle.jpg"
+        this.foreground = new Image();
+        this.foreground.src = "../images/foreground2.png";
     }
 
     draw(){
         ctx.drawImage(
             this.image,
+            0, 0, this.width, this.height,
+            this.x, this.y, this.width, this.height
+        );
+        ctx.drawImage(
+            this.foreground,
             0, 0, this.width, this.height,
             this.x, this.y, this.width, this.height
         );
