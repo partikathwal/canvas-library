@@ -16,20 +16,53 @@ class GameController {
         spacebar: null
     }
 
-    up(){
-        this.mapping.up?.();
+    buttons = {
+        upPressed: false,
+        downPressed: false,
+        leftPressed: false,
+        rightPressed: false,
+        spacebarPressed: false,
     }
-    down(){
-        this.mapping.down?.();
+
+    up(released){
+        if(this.buttons.upPressed && released){
+            this.buttons.upPressed = false;
+        }else{
+            this.buttons.upPressed = true;
+            this.mapping.up?.();
+        }
     }
-    left(){
-        this.mapping.left?.();
+    down(released){
+        if(this.buttons.downPressed && released){
+            this.buttons.downPressed = false;
+        }else{
+            this.buttons.downPressed = true;
+            this.mapping.down?.();
+        }
     }
-    right(){
-        this.mapping.right?.();
+    left(released){
+        if(this.buttons.leftPressed && released){
+            this.buttons.leftPressed = false;
+        }else{
+            this.buttons.leftPressed = true;
+            this.mapping.left?.();
+        }
     }
-    spacebar(){
-        this.mapping.spacebar?.();
+    right(released){
+        if(this.buttons.rightPressed && released){
+            this.buttons.rightPressed = false;
+        }else{
+            this.buttons.rightPressed = true;
+            this.mapping.right?.();
+        }
+    }
+    spacebar(released){
+        if(this.buttons.spacebarPressed && released){
+            this.buttons.spacebarPressed = false;
+        }else{
+            this.buttons.spacebarPressed = true;
+            this.mapping.spacebar?.();
+        }
     }
 
     /**
@@ -48,19 +81,41 @@ class GameController {
         document.addEventListener("keydown", (e) => {
             switch(e.key){
                 case "ArrowUp":
-                    controller.up();
+                    this.up();
                     break;
                 case "ArrowDown":
-                    controller.down();
+                    this.down();
                     break;
                 case "ArrowLeft":
-                    controller.left();
+                    this.left();
                     break;
                 case "ArrowRight":
-                    controller.right();
+                    this.right();
                     break;
                 case " ":
-                    controller.spacebar();
+                    this.spacebar();
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        document.addEventListener("keyup", (e) => {
+            switch(e.key){
+                case "ArrowUp":
+                    this.up(true);
+                    break;
+                case "ArrowDown":
+                    this.down(true);
+                    break;
+                case "ArrowLeft":
+                    this.left(true);
+                    break;
+                case "ArrowRight":
+                    this.right(true);
+                    break;
+                case " ":
+                    this.spacebar(true);
                     break;
                 default:
                     break;
