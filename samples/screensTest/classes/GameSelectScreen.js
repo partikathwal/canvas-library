@@ -47,6 +47,7 @@ class GameSelectScreen {
             gameSound.playSound(gameSound.sounds.MENU_SELECT);
             setTimeout(() => {
                 // fade to new game screen
+                screenManager.fadeTo(screenManager.screens.GAME);
             }, 300);
         }else
         if(this.highlightedChoiceIndex === 1){
@@ -55,6 +56,7 @@ class GameSelectScreen {
             
             setTimeout(() => {
                 // fade to continue game screen
+                screenManager.fadeTo(screenManager.screens.GAME);
             }, 300)
         }else
         if(this.highlightedChoiceIndex === 2){
