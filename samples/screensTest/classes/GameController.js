@@ -25,39 +25,43 @@ class GameController {
     }
 
     up(released){
-        if(this.buttons.upPressed && released){
+        if(released){
             this.buttons.upPressed = false;
         }else{
+            this.buttons.downPressed = false;
             this.buttons.upPressed = true;
             this.mapping.up?.();
         }
     }
     down(released){
-        if(this.buttons.downPressed && released){
+        if(released){
             this.buttons.downPressed = false;
         }else{
+            this.buttons.upPressed = false;
             this.buttons.downPressed = true;
             this.mapping.down?.();
         }
     }
     left(released){
-        if(this.buttons.leftPressed && released){
+        if(released){
             this.buttons.leftPressed = false;
         }else{
+            this.buttons.rightPressed = false;
             this.buttons.leftPressed = true;
             this.mapping.left?.();
         }
     }
     right(released){
-        if(this.buttons.rightPressed && released){
+        if(released){
             this.buttons.rightPressed = false;
         }else{
+            this.buttons.leftPressed = false;
             this.buttons.rightPressed = true;
             this.mapping.right?.();
         }
     }
     spacebar(released){
-        if(this.buttons.spacebarPressed && released){
+        if(released){
             this.buttons.spacebarPressed = false;
         }else{
             this.buttons.spacebarPressed = true;
