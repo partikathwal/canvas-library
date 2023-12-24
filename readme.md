@@ -106,7 +106,7 @@ ctx.fill();             // stroke also an option
 
 #### Rectangle
 ```
-ctx.fillRect(20, 20, 50, 50, "#a0d");
+ctx.fillRect(x, y, w, h, "#a0d");
 ```
 
 #### Circle
@@ -134,3 +134,113 @@ ctx.translate(newOriginX, newOriginY);
 ctx.rotate(angle);
 ctx.restore();
 ```
+
+
+## Objects
+
+**Visible** objects can include the player, a platform, an NPC, an item, a text node, an image, or a button. Break the game up into objects the way you'd break a webpage into components.
+
+**Non-visible** objects can include a user input manager (controller), a screen manager, a BGM manager, or game state.
+
+Some objects are in-between. They may be view-related, but instead of being visible, they manage visible objects, like a layer or a layout. They may or may not have a draw or update method. If they do, likely they would simply call the objects' corresponding method (but otherwise that would still be handled by the main animation thread).
+
+### Visible Objects
+Here is an example of a class for a typical visible element:
+
+    class ObjectName {
+
+        // properties, including state and dependencies, e.g.
+        x;
+        y;
+        speedX;
+        speedY;
+        screen; // possible dependency
+
+
+        constructor(){
+            // set initial state (or set that above)
+            // attach references to dependencies
+        }
+
+        // other helpful functions that update or draw can use
+
+        // other helpful functions that other objects can use
+
+        update(){
+            // update state
+            // logic for how the state changes every frame
+        }
+        draw(){
+            // draw the object to canvas context
+        }
+    }
+
+More specifically...
+
+    class Player {
+        x = 500;
+        y = 500;
+        speedX = 5;
+        speedY = 0;
+        accelerationY = -1;
+        inMidAir = false;
+        sprite = null
+
+        constructor(){
+            this.sprite = imageManager.sprites.player;
+        }
+
+        jump(){
+            this.inMidAir = true;
+            this.speedY = 10;
+        }
+
+        update(){
+            if(controller.left.isPressed){
+                this.x -= this.speedX;
+            }
+            if(controller.right.isPressed){
+                this.x += this.speedX;
+            }
+            if(controller.spacebar.isPressed && !this.inMidAir){
+                this.jump();
+            }
+
+            if(this.inMidAir){
+                this.speedY -= this.accelerationY;
+                this.y -= this.speedY;
+                if(this.speedY === -10) this.inMidAir = false;
+            }
+        }
+
+        draw(){
+            ctx.drawImage(this.sprite, this.x, this.y)
+        }
+    }
+
+
+### Non-visible Objects
+
+These don't have a "typical" representation. But here are some examples.
+
+A Controller is one example.
+
+Controllers can be state-based, event-based, or both. Some actions in a game react to a button being pressed. Others act *as long as* a button is held. A set of Controller mappings can be defined for every state a user can be in. For example, they may have the menu open, they may be walking, they may be midair, etc. In each of these situations, you may want different buttons to do different things. For each situation, or state, you can define what should happen when left gets pressed, otherwise what function should run as long as right is pressed. Thus the updating of a controllable object becomes delegated to the controller. Which makes sense. A controller controls by updating state.
+
+Super Metroid: Samus can walk, jump, spin-jump, crouch, morph, shoot, charge, switch weapons, use x-ray vision
+
+walk: while holding right/left
+jump: after pressing A
+spin-jump: while holding right/left, then after pressing A
+crouch: after pressing down
+morph: after pressing down again
+shoot: after pressing B
+charge: while holding B
+switch weapons: after pressing select
+use x-ray vision: while holding X
+
+There are things you can control and things you can't.
+You can control when the character can jump, but you can't control his height afterwards
+    (Maybe there's some sensitivity to how high you jump)
+    (So in that sense, you can control the acceleration, but not height)
+The controller set state. But the object's update method handles automatic state changes
