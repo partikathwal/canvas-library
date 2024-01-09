@@ -3,7 +3,8 @@ const CONFIG = {
     autoStart: false
 }
 
-// CONFIG.startingScreen = "GAME";
-// CONFIG.autoStart = true;
+//CONFIG.startingScreen = "GAME";
+CONFIG.startingScreen = "LAYOUT";
+CONFIG.autoStart = true;
 
 export { CONFIG };

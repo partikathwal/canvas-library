@@ -2,6 +2,7 @@ import { CONFIG } from "../config.js";
 import { fadeOverlay } from "./FadeOverlay.js";
 import { gameScreen } from "./GameScreen.js";
 import { gameSelectScreen } from "./GameSelectScreen.js";
+import { layoutsTestScreen } from "./LayoutsTestScreen.js";
 import { optionsScreen } from "./OptionsScreen.js";
 import { titleScreen } from "./TitleScreen.js";
 
@@ -10,7 +11,8 @@ class ScreenManager {
         TITLE: titleScreen,
         GAME_SELECT: gameSelectScreen,
         OPTIONS: optionsScreen,
-        GAME: gameScreen
+        GAME: gameScreen,
+        LAYOUT: layoutsTestScreen
     }
 
     #currentScreen = this.#screens[CONFIG.startingScreen];
