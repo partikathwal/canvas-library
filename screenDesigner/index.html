@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Designer</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        canvas {
+            border: 1px solid black
+        }
+
+        #palette {
+            display: flex;
+            width: 120px;
+            flex-wrap: wrap;
+        }
+
+        .swatch {
+            width: 50px;
+            height: 50px;
+            border: 1px solid grey;
+        }
+
+        .red {
+            background-color: red;
+        }
+        .orange {
+            background-color: orange;
+        }
+        .yellow {
+            background-color: yellow;
+        }
+        .green {
+            background-color: green;
+        }
+        .blue {
+            background-color: blue;
+        }
+        .indigo {
+            background-color: indigo;
+        }
+        .violet {
+            background-color: violet;
+        }
+        .white {
+            background-color: white;
+        }
+        .black {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="palette">
+        <div class="swatch red"></div>
+        <div class="swatch orange"></div>
+        <div class="swatch yellow"></div>
+        <div class="swatch green"></div>
+        <div class="swatch blue"></div>
+        <div class="swatch indigo"></div>
+        <div class="swatch violet"></div>
+        <div class="swatch white"></div>
+        <div class="swatch black"></div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="index.js"></script>
+</body>
+</html>

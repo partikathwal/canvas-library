@@ -4,7 +4,7 @@ const CONFIG = {
 }
 
 //CONFIG.startingScreen = "GAME";
-CONFIG.startingScreen = "LAYOUT";
-CONFIG.autoStart = true;
+//CONFIG.startingScreen = "LAYOUT";
+//CONFIG.autoStart = true;
 
 export { CONFIG };

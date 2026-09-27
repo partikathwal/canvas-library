@@ -41,8 +41,8 @@ Now the JS
 
 ```
 /** @type {HTMLCanvasElement} */
-const context = document.getElementById("canvas");
-const ctx = context.getContext("2d");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
 // fixed dimensions
 canvas.width = 1280;
@@ -229,15 +229,15 @@ Controllers can be state-based, event-based, or both. Some actions in a game rea
 
 Super Metroid: Samus can walk, jump, spin-jump, crouch, morph, shoot, charge, switch weapons, use x-ray vision
 
-walk: while holding right/left
-jump: after pressing A
-spin-jump: while holding right/left, then after pressing A
-crouch: after pressing down
-morph: after pressing down again
-shoot: after pressing B
-charge: while holding B
-switch weapons: after pressing select
-use x-ray vision: while holding X
+- walk: while holding right/left
+- jump: after pressing A
+- spin-jump: while holding right/left, then after pressing A
+- crouch: after pressing down
+- morph: after pressing down again
+- shoot: after pressing B
+- charge: while holding B
+- switch weapons: after pressing select
+- use x-ray vision: while holding X
 
 There are things you can control and things you can't.
 You can control when the character can jump, but you can't control his height afterwards

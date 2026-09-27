@@ -86,6 +86,22 @@ class FlexLayout {
         this.drawables = drawables;
     }
 
+    test(){
+        const totalHeight = this.drawables.reduce((total, d) => d[this.mainDimension] + total, 0);
+        const totalSpace = this[this.mainDimension] - totalHeight;
+        const gapHeight = totalSpace / (this.drawables.length * 2); // depends on justification
+        let positionPointer = this[this.mainAxis]; // can depend on justification
+
+        this.drawables.forEach(d => {
+            positionPointer += gapHeight; // depends
+            d[this.mainAxis] = positionPointer;
+            d[this.crossAxis] = this[this.crossAxis] + (this[this.crossDimension] / 2) - (d[this.crossDimension] / 2);
+            d.draw();
+            positionPointer += d[this.mainDimension];
+            positionPointer += gapHeight;
+        })
+    }
+
     start(){
         let positionPointer = this[this.mainAxis];
         this.drawables.forEach(d => {
