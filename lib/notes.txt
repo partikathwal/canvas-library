@@ -1,0 +1,42 @@
+
+Theoretically, you'd have something like:
+- Game.render(firstScreen)
+
+And each screen would be like a self contained module that has actions that take you to other screens.
+
+You may also register background scripts, just global things that run and are not limited by screen.
+Game state, music, and other things...
+
+const loadingScreen = new Screen();
+const homeScreen = new Screen();
+const menuScreen = new Screen();
+const playScreen = new Screen();
+
+Maybe there can be a subclass of Screen that accepts a Level()
+Like LevelScreen();
+It can be like a template, since a game with "levels" would be the same, just with a different initial setup kinda?
+
+Anyway...
+
+It all comes down to what game do I want to make right now?
+There's different kinds:
+- side-scroller "Mario"/"Metroid"/"Megaman" style
+- top-view RPG "Pokemon"/"RPG Maker" style
+- random, like "Ping-pong", "Space Invaders", "Jepoardy", etc.
+
+It would be good to pick one and go for it
+Start building components as they come up
+And just reuse and refine as I pick another one.
+
+The first two types seem to have more patterns.
+But even 'random' will address certain patterns that exist in all games
+    It'll also be more 'output' oriented, rather than trying to build a game machine
+    So I'll get results quicker.
+    It'll also be more flexible and creative.
+So I think I'll start that route.
+
+Of course I still need an idea.
+
+Let's not create something new. Let's recreate something first.
+
+Easy: Ping-pong.
